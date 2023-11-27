@@ -9,17 +9,17 @@ def exit_program():
     exit()
     
 def create_workout():
-    pass
+    print("this is a new workout")
 
 def workout_log():
-    pass
+    print("this is a workout log")
 
 def show_all_workouts():
-    pass
+    print("these are all the workouts")
 
 def show_all_users():
-    pass
+    print("these are all the users")
 
 def delete_workout():
-    pass
+    print("workout deleted")
 
