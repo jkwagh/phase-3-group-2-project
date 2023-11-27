@@ -2,7 +2,7 @@ class Users:
     def __init__(self, name, age, fitness_goals):
         self.name = name
         self.age = age
-        self.fitness_goals
+        self.fitness_goals = fitness_goals
         
     @property
     def name(self):

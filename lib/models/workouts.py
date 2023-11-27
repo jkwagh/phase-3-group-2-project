@@ -11,3 +11,6 @@ class Workout:
     @date.setter
     def date(self, value):
         self._date = value
+
+    def create_workout(date, duration, exercises):
+        pass
