@@ -1,5 +1,3 @@
-# lib/cli.py
-
 from helpers import (
     exit_program,
     helper_1,
@@ -26,7 +24,7 @@ def main():
         elif choice == "4":
             show_all_users()
         elif choice == "5":
-            delete_workout()    
+            delete_workout()
         else:
             print("Invalid choice")
 
