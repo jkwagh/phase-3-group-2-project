@@ -1,6 +1,7 @@
 from models.exercises import Exercise
 from models.workouts import create_workout as create_new_workout
 
+
 def helper_1():
     print("Performing useful function #1.")
 
