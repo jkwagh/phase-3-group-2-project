@@ -9,7 +9,10 @@ def exit_program():
     exit()
     
 def create_workout():
-    print("this is a new workout")
+    name = input("Enter Name of Workout: ")
+    date = input("Date of Workout: ")
+    exercises = input("Exercises in Workout: ")
+    user = input("Username: ")
 
 def workout_log():
     print("this is a workout log")
