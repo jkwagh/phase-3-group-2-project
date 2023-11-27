@@ -15,5 +15,5 @@ class Users:
         else:
             print("name must be a non-empty string")
 
-user1 = Users("Steve")
+user1 = Users("Steve", 25, "Build muscle")
 print(user1.name)
