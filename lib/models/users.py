@@ -1,3 +1,5 @@
+from models.__init__ import CURSOR, CONN
+
 class Users:
     def __init__(self, name, age, fitness_goals):
         self.name = name
@@ -33,9 +35,21 @@ class Users:
             self._fitness_goals = fitness_goals
         else:
             print("Fitness goals must be a string less than 140 characters")
+            
+    @classmethod
+    def get_all(cls):
+        """Return a list containing a Department object per row in the table"""
+        sql = """
+            SELECT *
+            FROM departments
+        """
+
+        rows = CURSOR.execute(sql).fetchall()
+
+        return [cls.instance_from_db(row) for row in rows]
 
     
-user1 = Users("Steve", 25, "To gain muscle")
-print(user1.name)
-print(user1.age)
-print(user1.fitness_goals)
+# user1 = Users("Steve", 25, "To gain muscle")
+# print(user1.name)
+# print(user1.age)
+# print(user1.fitness_goals)

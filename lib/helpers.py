@@ -1,5 +1,6 @@
 from models.exercises import Exercise
-from models.workouts import create_workout as create_new_workout
+# from models.workouts import create_workout as create_new_workout
+from models.users import Users
 
 
 def helper_1():
@@ -41,7 +42,9 @@ def show_all_workouts():
     print("These are all the workouts")
 
 def show_all_users():
-    print("These are all the users")
+    users = Users.get_all()
+    for user in users:
+        print(user)
 
 def delete_workout():
     print("Workout deleted.")

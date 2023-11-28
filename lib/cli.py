@@ -1,3 +1,5 @@
+import click
+
 from helpers import (
     exit_program,
     helper_1,
@@ -7,6 +9,8 @@ from helpers import (
     show_all_users,
     delete_workout
 )
+
+
 
 
 def main():
