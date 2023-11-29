@@ -56,9 +56,8 @@ def animate():
     """Simple console animation"""
     with click.progressbar(range(10), label='Processing') as bar:
         for _ in bar:
-            time.sleep(0.2)  # Simulate some processing time
+            time.sleep(0.2)  
             click.clear()
-            # Update the console with the animated frame
             click.echo("Animating...")
 
 @cli.command()
@@ -70,10 +69,9 @@ def create_user(name, age, fitness_goals):
     try:
         with click.progressbar(range(10), label='Creating User') as bar:
             for _ in bar:
-                time.sleep(0.1)  # Simulate some processing time
+                time.sleep(0.1)  
                 click.clear()
                 click.echo("Creating User...")
-                
         user = User.create(session, name=name, age=age, fitness_goals=fitness_goals)
         click.echo(click.style(f"User {name} created successfully with ID: {user.id}", fg='green'))
     except Exception as e:
