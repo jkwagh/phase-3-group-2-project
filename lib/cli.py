@@ -49,16 +49,8 @@ def cli():
     """Fitness Tracker CLI"""
     f = pyfiglet.Figlet(font="slant")
     title_art = f.renderText('Time to get fit!')
-    print(title_art)
-
-@cli.command()
-def animate():
-    """Simple console animation"""
-    with click.progressbar(range(10), label='Processing') as bar:
-        for _ in bar:
-            time.sleep(0.2)  
-            click.clear()
-            click.echo("Animating...")
+    colored_title = click.style(title_art, fg='green')
+    print(colored_title)
 
 @cli.command()
 @click.option('--name', prompt='Enter the user name', help='User name')
