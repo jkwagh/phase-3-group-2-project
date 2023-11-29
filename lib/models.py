@@ -152,3 +152,4 @@ class WorkoutExercises(Base):
     @classmethod
     def find_by_ids(cls, session, workout_id, exercise_id):
         return session.query(cls).filter_by(workout_id=workout_id, exercise_id=exercise_id).first()
+

@@ -4,7 +4,8 @@ from sqlalchemy.orm import sessionmaker
 from models import Base, User, Workout, Exercise
 from database import setup_database
 from prettytable import PrettyTable
-from pyfiglet import Figlet
+import pyfiglet
+import time
 
 DBSession, engine = setup_database()
 
@@ -46,9 +47,19 @@ def display_exercises_table(exercises):
 @click.group()
 def cli():
     """Fitness Tracker CLI"""
-    f = Figlet(font='banner', color='black')
-    title_art = f.renderText('Fitness Tracker')
-    click.echo(click.style(title_art, fg='green'))
+    f = pyfiglet.Figlet(font="slant")
+    title_art = f.renderText('Time to get fit!')
+    print(title_art)
+
+@cli.command()
+def animate():
+    """Simple console animation"""
+    with click.progressbar(range(10), label='Processing') as bar:
+        for _ in bar:
+            time.sleep(0.2)  # Simulate some processing time
+            click.clear()
+            # Update the console with the animated frame
+            click.echo("Animating...")
 
 @cli.command()
 @click.option('--name', prompt='Enter the user name', help='User name')
@@ -57,6 +68,12 @@ def cli():
 def create_user(name, age, fitness_goals):
     """Create a new user"""
     try:
+        with click.progressbar(range(10), label='Creating User') as bar:
+            for _ in bar:
+                time.sleep(0.1)  # Simulate some processing time
+                click.clear()
+                click.echo("Creating User...")
+                
         user = User.create(session, name=name, age=age, fitness_goals=fitness_goals)
         click.echo(click.style(f"User {name} created successfully with ID: {user.id}", fg='green'))
     except Exception as e:
