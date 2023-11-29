@@ -10,6 +10,16 @@ Base.metadata.bind = engine
 DBSession = sessionmaker(bind=engine)
 session = DBSession()
 
+def validate_positive_integer(value, field_name):
+    if value <= 0:
+        raise ValueError(f"{field_name} must be a positive integer.")
+
+def validate_date_format(value):
+    try:
+        return datetime.strptime(value, '%Y-%m-%d')
+    except ValueError:
+        raise ValueError("Invalid date format. Please use YYYY-MM-DD.")
+
 @click.group()
 def cli():
     """Fitness Tracker CLI"""
@@ -20,15 +30,21 @@ def cli():
 @click.option('--fitness_goals', prompt='Enter fitness goals', help='User fitness goals')
 def create_user(name, age, fitness_goals):
     """Create a new user"""
-    user = User.create(session, name=name, age=age, fitness_goals=fitness_goals)
-    click.echo(f"User {name} created successfully with ID: {user.id}")
+    try:
+        user = User.create(session, name=name, age=age, fitness_goals=fitness_goals)
+        click.echo(f"User {name} created successfully with ID: {user.id}")
+    except Exception as e:
+        click.echo(f"Error creating user: {e}")
 
 @cli.command()
 @click.option('--user_id', prompt='Enter the user ID to delete', type=int, help='User ID to delete')
 def delete_user(user_id):
     """Delete a user"""
-    User.delete(session, user_id)
-    click.echo(f"User with ID {user_id} deleted successfully!")
+    try:
+        User.delete(session, user_id)
+        click.echo(f"User with ID {user_id} deleted successfully!")
+    except Exception as e:
+        click.echo(f"Error deleting user: {e}")
 
 @cli.command()
 @click.option('--user_id', prompt='Enter the user ID', type=int, help='User ID')
@@ -36,66 +52,94 @@ def delete_user(user_id):
 @click.option('--duration', prompt='Enter the duration in minutes', type=int, help='Workout duration')
 def add_workout(user_id, date, duration):
     """Add a workout"""
-    workout = Workout.create(session, date=datetime.strptime(date, '%Y-%m-%d'), duration=duration, user_id=user_id)
-    click.echo(f"Workout logged for user ID {user_id} on {date} for {duration} minutes with ID: {workout.id}")
+    try:
+        date_obj = validate_date_format(date)
+        validate_positive_integer(duration, "Duration")
+        workout = Workout.create(session, date=date_obj, duration=duration, user_id=user_id)
+        click.echo(f"Workout logged for user ID {user_id} on {date} for {duration} minutes with ID: {workout.id}")
+    except ValueError as ve:
+        click.echo(f"Error: {ve}")
+    except Exception as e:
+        click.echo(f"Error adding workout: {e}")
 
 @cli.command()
 @click.option('--workout_id', prompt='Enter the workout ID to delete', type=int, help='Workout ID to delete')
 def delete_workout(workout_id):
     """Delete a workout"""
-    Workout.delete(session, workout_id)
-    click.echo(f"Workout with ID {workout_id} deleted successfully!")
-
+    try:
+        Workout.delete(session, workout_id)
+        click.echo(f"Workout with ID {workout_id} deleted successfully!")
+    except Exception as e:
+        click.echo(f"Error deleting workout: {e}")
+        
 @cli.command()
 def display_users():
     """Display all users"""
-    users = User.get_all(session)
-    for user in users:
-        click.echo(f"User ID: {user.id}, Name: {user.name}, Age: {user.age}, Fitness Goals: {user.fitness_goals}")
+    try:
+        users = User.get_all(session)
+        for user in users:
+            click.echo(f"User ID: {user.id}, Name: {user.name}, Age: {user.age}, Fitness Goals: {user.fitness_goals}")
+    except Exception as e:
+        click.echo(f"Error displaying users: {e}")
 
 @cli.command()
 def display_workouts():
     """Display all workouts"""
-    workouts = Workout.get_all(session)
-    for workout in workouts:
-        click.echo(f"Workout ID: {workout.id}, Date: {workout.date}, Duration: {workout.duration} minutes")
+    try:
+        workouts = Workout.get_all(session)
+        for workout in workouts:
+            click.echo(f"Workout ID: {workout.id}, Date: {workout.date}, Duration: {workout.duration} minutes")
+    except Exception as e:
+        click.echo(f"Error displaying workouts: {e}")
 
 @cli.command()
 def display_exercises():
     """Display all exercises"""
-    exercises = Exercise.get_all(session)
-    for exercise in exercises:
-        click.echo(f"Exercise ID: {exercise.id}, Name: {exercise.name}, Type: {exercise.type}, Difficulty: {exercise.difficulty}")
+    try:
+        exercises = Exercise.get_all(session)
+        for exercise in exercises:
+            click.echo(f"Exercise ID: {exercise.id}, Name: {exercise.name}, Type: {exercise.type}, Difficulty: {exercise.difficulty}")
+    except Exception as e:
+        click.echo(f"Error displaying exercises: {e}")
 
 @cli.command()
 @click.option('--user_id', prompt='Enter the user ID to find', type=int, help='User ID to find')
 def find_user(user_id):
     """Find user by ID"""
-    user = User.find_by_id(session, user_id)
-    if user:
-        click.echo(f"User ID: {user.id}, Name: {user.name}, Age: {user.age}, Fitness Goals: {user.fitness_goals}")
-    else:
-        click.echo(f"User with ID {user_id} not found.")
+    try:
+        user = User.find_by_id(session, user_id)
+        if user:
+            click.echo(f"User ID: {user.id}, Name: {user.name}, Age: {user.age}, Fitness Goals: {user.fitness_goals}")
+        else:
+            click.echo(f"User with ID {user_id} not found.")
+    except Exception as e:
+        click.echo(f"Error finding user: {e}")
 
 @cli.command()
 @click.option('--workout_id', prompt='Enter the workout ID to find', type=int, help='Workout ID to find')
 def find_workout(workout_id):
     """Find workout by ID"""
-    workout = Workout.find_by_id(session, workout_id)
-    if workout:
-        click.echo(f"Workout ID: {workout.id}, Date: {workout.date}, Duration: {workout.duration} minutes")
-    else:
-        click.echo(f"Workout with ID {workout_id} not found.")
+    try:
+        workout = Workout.find_by_id(session, workout_id)
+        if workout:
+            click.echo(f"Workout ID: {workout.id}, Date: {workout.date}, Duration: {workout.duration} minutes")
+        else:
+            click.echo(f"Workout with ID {workout_id} not found.")
+    except Exception as e:
+        click.echo(f"Error finding workout: {e}")
 
 @cli.command()
 @click.option('--exercise_id', prompt='Enter the exercise ID to find', type=int, help='Exercise ID to find')
 def find_exercise(exercise_id):
     """Find exercise by ID"""
-    exercise = Exercise.find_by_id(session, exercise_id)
-    if exercise:
-        click.echo(f"Exercise ID: {exercise.id}, Name: {exercise.name}, Type: {exercise.type}, Difficulty: {exercise.difficulty}")
-    else:
-        click.echo(f"Exercise with ID {exercise_id} not found.")
+    try:
+        exercise = Exercise.find_by_id(session, exercise_id)
+        if exercise:
+            click.echo(f"Exercise ID: {exercise.id}, Name: {exercise.name}, Type: {exercise.type}, Difficulty: {exercise.difficulty}")
+        else:
+            click.echo(f"Exercise with ID {exercise_id} not found.")
+    except Exception as e:
+        click.echo(f"Error finding exercise: {e}")
 
 @cli.command()
 @click.option('--name', prompt='Enter the exercise name', help='Exercise name')
@@ -105,15 +149,27 @@ def find_exercise(exercise_id):
 @click.option('--reps', prompt='Enter the number of reps', type=int, help='Number of reps')
 def add_exercise(name, type, difficulty, sets, reps):
     """Add a new exercise"""
-    exercise = Exercise.create(session, name=name, exercise_type=type, difficulty=difficulty, sets=sets, reps=reps)
-    click.echo(f"Exercise {name} added successfully with ID: {exercise.id}")
+    try:
+        validate_positive_integer(difficulty, "Difficulty")
+        validate_positive_integer(sets, "Number of sets")
+        validate_positive_integer(reps, "Number of reps")
+
+        exercise = Exercise.create(session, name=name, exercise_type=type, difficulty=difficulty, sets=sets, reps=reps)
+        click.echo(f"Exercise {name} added successfully with ID: {exercise.id}")
+    except ValueError as ve:
+        click.echo(f"Error: {ve}")
+    except Exception as e:
+        click.echo(f"Error adding exercise: {e}")
 
 @cli.command()
 @click.option('--exercise_id', prompt='Enter the exercise ID to delete', type=int, help='Exercise ID to delete')
 def delete_exercise(exercise_id):
     """Delete an exercise"""
-    Exercise.delete(session, exercise_id)
-    click.echo(f"Exercise with ID {exercise_id} deleted successfully!")
+    try:
+        Exercise.delete(session, exercise_id)
+        click.echo(f"Exercise with ID {exercise_id} deleted successfully!")
+    except Exception as e:
+        click.echo(f"Error deleting exercise: {e}")
 
 if __name__ == '__main__':
     cli()
