@@ -4,6 +4,7 @@ from sqlalchemy.orm import sessionmaker
 from models import Base, User, Workout, Exercise
 from database import setup_database
 from prettytable import PrettyTable
+from pyfiglet import Figlet
 
 DBSession, engine = setup_database()
 
@@ -45,6 +46,9 @@ def display_exercises_table(exercises):
 @click.group()
 def cli():
     """Fitness Tracker CLI"""
+    f = Figlet(font='banner', color='black')
+    title_art = f.renderText('Fitness Tracker')
+    click.echo(click.style(title_art, fg='green'))
 
 @cli.command()
 @click.option('--name', prompt='Enter the user name', help='User name')
