@@ -1,6 +1,11 @@
 from models.__init__ import CURSOR, CONN
+from sqlalchemy import create_engine
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
+from faker import Faker
 
 class Users:
+    __tablename__ = "Users"
     def __init__(self, name, age, fitness_goals):
         self.name = name
         self.age = age

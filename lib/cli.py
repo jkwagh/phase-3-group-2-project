@@ -1,5 +1,6 @@
 import click
 from sqlalchemy import create_engine
+engine = create_engine("sqlite+pysqlite:///:memory:", echo=True)
 
 from helpers import (
     exit_program,
