@@ -1,4 +1,5 @@
 import click
+from sqlalchemy import create_engine
 
 from helpers import (
     exit_program,
@@ -9,8 +10,6 @@ from helpers import (
     show_all_users,
     delete_workout
 )
-
-
 
 
 def main():
