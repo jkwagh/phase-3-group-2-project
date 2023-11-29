@@ -97,5 +97,23 @@ def find_exercise(exercise_id):
     else:
         click.echo(f"Exercise with ID {exercise_id} not found.")
 
+@cli.command()
+@click.option('--name', prompt='Enter the exercise name', help='Exercise name')
+@click.option('--type', prompt='Enter the exercise type', help='Exercise type')
+@click.option('--difficulty', prompt='Enter the exercise difficulty', type=int, help='Exercise difficulty')
+@click.option('--sets', prompt='Enter the number of sets', type=int, help='Number of sets')
+@click.option('--reps', prompt='Enter the number of reps', type=int, help='Number of reps')
+def add_exercise(name, type, difficulty, sets, reps):
+    """Add a new exercise"""
+    exercise = Exercise.create(session, name=name, exercise_type=type, difficulty=difficulty, sets=sets, reps=reps)
+    click.echo(f"Exercise {name} added successfully with ID: {exercise.id}")
+
+@cli.command()
+@click.option('--exercise_id', prompt='Enter the exercise ID to delete', type=int, help='Exercise ID to delete')
+def delete_exercise(exercise_id):
+    """Delete an exercise"""
+    Exercise.delete(session, exercise_id)
+    click.echo(f"Exercise with ID {exercise_id} deleted successfully!")
+
 if __name__ == '__main__':
     cli()
