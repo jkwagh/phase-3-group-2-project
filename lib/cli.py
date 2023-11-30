@@ -271,6 +271,28 @@ def delete_exercise(exercise_id):
 
     except Exception as e:
         click.echo(f"Error deleting exercise: {e}")
+
+@cli.command()
+@click.option('--workout_id', prompt='Enter the workout ID to find', type=int, help='Workout ID to find')
+def find_workout_exercises(workout_id):
+    """Display exercises associated with workouts"""
+    try:
+        workout = Workout.find_by_id(session, workout_id)
+        if workout:
+            click.echo(click.style(f"Workout ID: {workout.id}, Date: {workout.date}, Duration: {workout.duration} minutes", fg='green'))
+
+            exercises = session.query(Exercise).join(WorkoutExercises).filter(WorkoutExercises.workout_id == workout.id).all()
+
+            if exercises:
+                click.echo("Exercises:")
+                for exercise in exercises:
+                    click.echo(click.style(f"- ID: {exercise.id}, Name: {exercise.name}, Type: {exercise.type}, Difficulty: {exercise.difficulty}", fg='blue'))
+            else:
+                click.echo("No exercises found for this workout.")
+        else:
+            click.echo(f"Workout with ID {workout_id} not found.")
+    except Exception as e:
+        click.echo(f"Error finding workout: {e}")
     
 if __name__ == '__main__':
     cli()
