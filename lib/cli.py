@@ -71,7 +71,7 @@ def cli():
     f = pyfiglet.Figlet(font="slant")
     title_art = f.renderText('Time to get fit!')
     colored_title = click.style(title_art, fg='green')
-    print(colored_title)
+    print(title_art)
 
 @cli.command()
 @click.option('--name', prompt='Enter the user name', help='User name')
@@ -90,6 +90,8 @@ def create_user(name, age, fitness_goals):
         click.echo(click.style(f"User {name} created successfully with ID: {user.id}", fg='green'))
     except Exception as e:
         click.echo(click.style(f"Error creating user: {e}", fg='red'))
+    
+    return
 
 @cli.command()
 @click.option('--user_id', prompt='Enter the user ID to delete', type=int, help='User ID to delete')
@@ -124,10 +126,24 @@ def add_workout(user_id, date, duration):
             exercise_difficulty = click.prompt('Enter exercise difficulty', type=int)
             exercise_sets = click.prompt('Enter the number of sets', type=int)
             exercise_reps = click.prompt('Enter the number of reps', type=int)
+            
+            existing_exercise = Exercise.find_by_name(session, exercise_name)
+            
+            if existing_exercise:
+                # Exercise already exists, use existing exercise
+                exercise = existing_exercise
+                click.echo(f"Using existing exercise: {exercise_name}")
+            else:
+                # Exercise doesn't exist, create new one
+                exercise = Exercise.create(session, name=exercise_name, exercise_type=exercise_type, difficulty=exercise_difficulty, sets=exercise_sets, reps=exercise_reps)
 
-            exercise = Exercise.create(session, name=exercise_name, exercise_type=exercise_type, difficulty=exercise_difficulty, sets=exercise_sets, reps=exercise_reps)
-            WorkoutExercises.create(session, workout_id=workout.id, exercise_id=exercise.id, sets_completed=exercise_sets, reps_completed=exercise_reps)
-
+            #check if exercise is already in the workout
+            if not any(w_e.exercise_id == exercise.id for w_e in workout.exercises):
+                WorkoutExercises.create(session, workout_id=workout.id, exercise_id=exercise.id, sets_completed=exercise_sets, reps_completed=exercise_reps)
+                click.echo(f"Exercise {exercise_name} added to the workout.")
+            else:
+                click.echo(f"Exercise {exercise_name} is already in the workout.")
+                
         with click.progressbar(range(10), label='Creating Workout') as bar:
             for _ in bar:
                 time.sleep(0.1)
@@ -139,6 +155,8 @@ def add_workout(user_id, date, duration):
         click.echo(f"Error: {ve}")
     except Exception as e:
         click.echo(click.style(f"Error adding workout: {e}", fg='red'))
+    
+    return
 
 
 @cli.command()
@@ -229,9 +247,15 @@ def add_exercise(name, type, difficulty, sets, reps):
         validate_positive_integer(difficulty, "Difficulty")
         validate_positive_integer(sets, "Number of sets")
         validate_positive_integer(reps, "Number of reps")
+        
+        existing_exercise = Exercise.find_by_name(session, name)
 
-        exercise = Exercise.create(session, name=name, exercise_type=type, difficulty=difficulty, sets=sets, reps=reps)
-        click.echo(click.style(f"Exercise {name} added successfully with ID: {exercise.id}", fg= 'green'))
+        if existing_exercise:
+            # Exercise already exists
+            click.echo(f"Exercise {name} already exists with ID: {existing_exercise.id}.")
+        else:
+            exercise = Exercise.create(session, name=name, exercise_type=type, difficulty=difficulty, sets=sets, reps=reps)
+            click.echo(click.style(f"Exercise {name} added successfully with ID: {exercise.id}", fg= 'green'))
     except ValueError as ve:
         click.echo(f"Error: {ve}")
     except Exception as e:
@@ -247,6 +271,7 @@ def delete_exercise(exercise_id):
 
     except Exception as e:
         click.echo(f"Error deleting exercise: {e}")
-
+    
 if __name__ == '__main__':
     cli()
+    

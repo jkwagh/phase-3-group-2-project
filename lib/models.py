@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine, Date, ForeignKey, Enum, inspect
+from sqlalchemy import create_engine, Date, ForeignKey, Enum, inspect, func
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, Integer, String, CheckConstraint
 from sqlalchemy.orm import relationship, sessionmaker
@@ -54,6 +54,10 @@ class Exercise(Base):
     @classmethod
     def find_by_id(cls, session, exercise_id):
         return session.query(cls).filter_by(id=exercise_id).first()
+    
+    @classmethod
+    def find_by_name(cls, session, name):
+        return session.query(cls).filter(func.lower(cls.name) == func.lower(name)).first()
 
 class User(Base):
     __tablename__ = 'users'
