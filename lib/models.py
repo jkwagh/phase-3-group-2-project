@@ -62,11 +62,6 @@ class User(Base):
     name = Column(String, nullable=False)
     age = Column(Integer)
     fitness_goals = Column(String)
-    
-    __table_args__ = (
-        CheckConstraint('age >= 1 AND age <= 100', name='age_restraints'),
-        CheckConstraint("len(fitness_goals) < 140", name='check_fitness_goals_length')
-    )
 
     workouts = relationship('Workout', back_populates='user')
 
