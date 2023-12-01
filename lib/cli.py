@@ -267,12 +267,14 @@ def find_exercise(exercise_id):
 def add_exercise(name, type, difficulty, sets, reps):
     """Add a new exercise"""
     try:
+        exercise_type_lower = type.lower()
+
         validate_positive_integer(difficulty, "Difficulty")
         validate_positive_integer(sets, "Number of sets")
         validate_positive_integer(reps, "Number of reps")
 
-        exercise = Exercise.create(session, name=name, exercise_type=type, difficulty=difficulty, sets=sets, reps=reps)
-        click.echo(click.style(f"Exercise {name} added successfully with ID: {exercise.id}", fg= 'green'))
+        exercise = Exercise.create(session, name=name, exercise_type=exercise_type_lower, difficulty=difficulty, sets=sets, reps=reps)
+        click.echo(click.style(f"Exercise {name} added successfully with ID: {exercise.id}", fg='green'))
     except ValueError as ve:
         click.echo(f"Error: {ve}")
     except Exception as e:
@@ -280,6 +282,7 @@ def add_exercise(name, type, difficulty, sets, reps):
     return_to_user_menu = click.confirm("Do you want to return to the User Menu?", default=True)
     if return_to_user_menu:
         user_menu()
+
 
 @cli.command()
 @click.option('--exercise_id', prompt='Enter the exercise ID to delete', type=int, help='Exercise ID to delete')
@@ -341,6 +344,22 @@ def display_user_menu_ascii_art():
 """
     click.echo(user_menu_art)
 
+def display_user_workouts():
+    """Display workouts for the logged-in user"""
+    try:
+        workouts = Workout.get_user_workouts(session, current_user.id)
+        display_workouts_table(workouts)
+    except Exception as e:
+        click.echo(f"Error displaying user workouts: {e}")
+
+def display_user_exercises():
+    """Display exercises for the logged-in user"""
+    try:
+        exercises = Exercise.get_user_exercises(session, current_user.id)
+        display_exercises_table(exercises)
+    except Exception as e:
+        click.echo(f"Error displaying user exercises: {e}")
+
 
 def user_menu():
     """Menu for logged-in users"""
@@ -349,34 +368,40 @@ def user_menu():
         click.echo(click.style("User Menu:", fg='green'))
         click.echo("1. Add Workout")
         click.echo("2. Delete Workout")
-        click.echo("3. Display Workouts")
-        click.echo("4. Add Exercise")
-        click.echo("5. Delete Exercise")
-        click.echo("6. Display Exercises")
-        click.echo("7. Show Exercises in Workout")
-        click.echo("8. Logout")
+        click.echo("3. Display User Workouts")
+        click.echo("4. Display Workouts")
+        click.echo("5. Add Exercise")
+        click.echo("6. Delete Exercise")
+        click.echo("7. Display User Exercises")
+        click.echo("8. Display Exercises")
+        click.echo("9. Show Exercises in Workout")
+        click.echo("10. Logout")
 
-        choice = click.prompt("Enter your choice (1-8)", type=int)
+        choice = click.prompt("Enter your choice (1-10)", type=int)
 
         if choice == 1:
             add_workout()
         elif choice == 2:
             delete_workout()
         elif choice == 3:
-            display_workouts()
+            display_user_workouts()
         elif choice == 4:
-            add_exercise()
+            display_workouts()
         elif choice == 5:
-            delete_exercise()
+            add_exercise()
         elif choice == 6:
-            display_exercises()
+            delete_exercise()
         elif choice == 7:
-            find_workout_exercises()
+            display_user_exercises()
         elif choice == 8:
+            display_exercises()
+        elif choice == 9:
+            find_workout_exercises()
+        elif choice == 10:
             logout()
-            break  
+            break
         else:
-            click.echo("Invalid choice. Please enter a number between 1 and 8.")
+            click.echo("Invalid choice. Please enter a number between 1 and 10.")
 
 @cli.command()
 @click.option('--username', prompt='Enter the username', help='Username')
@@ -462,15 +487,15 @@ def display_main_menu_ascii_art():
 def main_menu():
     """Main menu for the Fitness Tracker"""
     display_title()
-    time.sleep(1)  
+    time.sleep(0.5)  
     click.clear() 
 
     display_main_menu_ascii_art()
-    time.sleep(1)  
+    time.sleep(0.5)  
     click.clear() 
 
     display_title()
-    time.sleep(1)
+    time.sleep(0.5)
     
     global current_user
     while True:

@@ -56,6 +56,11 @@ class Exercise(Base):
     def find_by_id(cls, session, exercise_id):
         return session.query(cls).filter_by(id=exercise_id).first()
 
+    @classmethod
+    def get_user_exercises(cls, session, user_id):
+        """Get exercises for a specific user."""
+        return session.query(cls).join(WorkoutExercises).join(Workout).filter(Workout.user_id == user_id).all()
+
 class User(Base):
     __tablename__ = 'users'
 
@@ -135,6 +140,11 @@ class Workout(Base):
     @classmethod
     def find_by_id(cls, session, workout_id):
         return session.query(cls).filter_by(id=workout_id).first()
+
+    @classmethod
+    def get_user_workouts(cls, session, user_id):
+        """Get workouts for a specific user."""
+        return session.query(cls).filter(cls.user_id == user_id).all()
 
 class WorkoutExercises(Base):
     __tablename__ = 'workout_exercises'
