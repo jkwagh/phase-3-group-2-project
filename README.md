@@ -1,61 +1,83 @@
-# Fitness Tracker CLI
-
-## Overview
-The Fitness Tracker CLI is a command-line interface for tracking users, workouts, and exercises. It provides functionality to create users, log workouts, add exercises, and more.
-
 ## Table of Contents
-- [Installation](#installation)
-- [Usage](#usage)
-  - [Creating a User](#creating-a-user)
-  - [Deleting a User](#deleting-a-user)
-  - [Adding a Workout](#adding-a-workout)
-  - [Deleting a Workout](#deleting-a-workout)
-  - [Displaying Users, Workouts, and Exercises](#displaying-users-workouts-and-exercises)
-  - [Finding User, Workout, and Exercise by ID](#finding-user-workout-and-exercise-by-id)
-  - [Adding and Deleting an Exercise](#adding-and-deleting-an-exercise)
+- Installation
+- Usage
+- Main Menu
+- User Menu
+- Commands
 
 ## Installation
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/your-username/fitness-tracker-cli.git
-   cd fitness-tracker-cli
+To use the Fitness Tracker CLI app, follow these steps:
 
-## Install dependencies:
-- pip install -r requirements.txt
-
-## Setup the database:
-- python database.py
+- Clone the repository:
+Copy code
+git clone <repository_url>
+- Install the required dependencies:
+pip install -r requirements.txt
+- Run the cli.py file:
+python cli.py
 
 ## Usage
-## Creating a User
-- python cli.py create_user
-- Follow the prompts to enter user information.
 
-## Deleting a User
-- python cli.py delete_user --user_id USER_ID
-- Replace USER_ID with the ID of the user you want to delete.
+## Main Menu
+Upon running the application, you'll be presented with the main menu. Here are the available options:
 
-## Adding a Workout
-- python cli.py add_workout --user_id USER_ID --date YYYY-MM-DD --duration DURATION
-- Replace USER_ID, YYYY-MM-DD, and DURATION with the appropriate values.
+- Create User: Allows you to create a new user.
 
-## Deleting a Workout
-- python cli.py delete_workout --workout_id WORKOUT_ID
-- Replace WORKOUT_ID with the ID of the workout you want to delete.
+- Login: Log in as an existing user.
 
-## Displaying Users, Workouts, and Exercises
-- python cli.py display_users
-- python cli.py display_workouts
-- python cli.py display_exercises
+- Display All Users: Shows a table of all existing users.
 
-## Finding User, Workout, and Exercise by ID
-- python cli.py find_user --user_id USER_ID
-- python cli.py find_workout --workout_id WORKOUT_ID
-- python cli.py find_exercise --exercise_id EXERCISE_ID
-- Replace USER_ID, WORKOUT_ID, and EXERCISE_ID with the desired IDs.
+- Delete User by ID: Deletes a user based on their ID.
 
-## Adding and Deleting an Exercise
-- python cli.py add_exercise --name EXERCISE_NAME --type EXERCISE_TYPE --difficulty DIFFICULTY --sets SETS --reps REPS
-- Replace EXERCISE_NAME, EXERCISE_TYPE, DIFFICULTY, SETS, and REPS with the appropriate values.
-- python cli.py delete_exercise --exercise_id EXERCISE_ID
-- Replace EXERCISE_ID with the ID of the exercise you want to delete.
+- Exit: Exits the application.
+
+## User Menu
+- After logging in or creating a user, you'll enter the user menu. Here are the available options:
+
+- Add Workout: Log a workout, including exercises.
+
+- Delete Workout: Delete a workout by ID.
+
+- Display User Workouts: Display all workouts for the logged-in user.
+
+- Display Workouts: Display all workouts for all users.
+
+- Add Exercise: Add a new exercise.
+
+- Delete Exercise: Delete an exercise by ID.
+
+- Display User Exercises: Display all exercises for the logged-in user.
+
+- Display Exercises: Display all exercises for all users.
+
+- Show Exercises in Workout: Display exercises associated with a specific workout.
+
+- Logout: Log out the current user.
+
+## Commands
+- create_user: Create a new user with username, password, name, age, and fitness goals.
+python cli.py create_user
+
+- delete_user: Delete a user by ID.
+python cli.py delete_user --user_id <user_id>
+
+- add_workout: Add a workout, including exercises.
+python cli.py add_workout
+
+- delete_workout: Delete a workout by ID.
+python cli.py delete_workout --workout_id <workout_id>
+
+- display_users: Display a table of all users.
+python cli.py display_users
+
+- display_workouts: Display a table of all workouts.
+python cli.py display_workouts
+
+- display_exercises: Display a table of all exercises.
+python cli.py display_exercises
+
+- find_workout_exercises: Display exercises associated with a specific workout.
+python cli.py find_workout_exercises --workout_id <workout_id>
+
+- logout: Log out the current user.
+python cli.py logout
