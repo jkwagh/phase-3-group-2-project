@@ -4,6 +4,7 @@ from sqlalchemy import Column, Integer, String, CheckConstraint
 from sqlalchemy.orm import relationship, sessionmaker
 from sqlalchemy.types import Enum as EnumType
 from werkzeug.security import generate_password_hash, check_password_hash
+from sqlalchemy.orm.exc import NoResultFound
 
 Base = declarative_base()
 

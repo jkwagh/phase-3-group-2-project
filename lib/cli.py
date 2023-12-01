@@ -409,16 +409,21 @@ def user_menu():
 def login(username, password):
     """Log in as an existing user"""
     global current_user
-    user = User.get_by_username(session, username)
-    if user and user.check_password(password):
-        current_user = user  
-        click.echo(click.style(f"Successfully logged in as {username}", fg='green'))
-        user_menu()
-    else:
+    try:
+        user = User.get_by_username(session, username)
+        if user and user.check_password(password):
+            current_user = user  
+            click.echo(click.style(f"Successfully logged in as {username}", fg='green'))
+            user_menu()
+        else:
+            click.echo(click.style("Invalid username or password", fg='red'))
+    except NoResultFound:
         click.echo(click.style("Invalid username or password", fg='red'))
+
     return_to_main_menu = click.confirm("Do you want to return to the Main Menu?", default=True)
     if return_to_main_menu:
         main_menu()
+
 SESSION_FILE = "user_session.txt"
 
 def save_session(username):
