@@ -3,6 +3,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, Integer, String, CheckConstraint
 from sqlalchemy.orm import relationship, sessionmaker
 from sqlalchemy.types import Enum as EnumType
+from werkzeug.security import generate_password_hash, check_password_hash
 
 Base = declarative_base()
 
@@ -59,15 +60,25 @@ class User(Base):
     __tablename__ = 'users'
 
     id = Column(Integer, primary_key=True)
+    username = Column(String, unique=True, nullable=False)
+    password_hash = Column(String, nullable=False)
     name = Column(String, nullable=False)
     age = Column(Integer)
     fitness_goals = Column(String)
 
     workouts = relationship('Workout', back_populates='user')
 
+    @staticmethod
+    def set_password(password):
+        return generate_password_hash(password)
+
+    def check_password(self, password):
+        return check_password_hash(self.password_hash, password)
+
     @classmethod
-    def create(cls, session, name, age, fitness_goals):
-        user = cls(name=name, age=age, fitness_goals=fitness_goals)
+    def create(cls, session, username, password, name, age, fitness_goals):
+        hashed_password = cls.set_password(password)
+        user = cls(username=username, password_hash=hashed_password, name=name, age=age, fitness_goals=fitness_goals)
         session.add(user)
         session.commit()
         return user
@@ -87,13 +98,13 @@ class User(Base):
     def find_by_id(cls, session, user_id):
         return session.query(cls).filter_by(id=user_id).first()
 
+
 class Workout(Base):
     __tablename__ = 'workouts'
-
     id = Column(Integer, primary_key=True)
     date = Column(Date, nullable=False)
     duration = Column(Integer)
-    user_id = Column(Integer, ForeignKey('users.id'))
+    user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
 
     user = relationship('User', back_populates='workouts')
     exercises = relationship('WorkoutExercises', back_populates='workout')
