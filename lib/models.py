@@ -97,8 +97,13 @@ class User(Base):
     @classmethod
     def find_by_id(cls, session, user_id):
         return session.query(cls).filter_by(id=user_id).first()
-
-
+    
+    @classmethod
+    def get_by_username(cls, session, username):
+        try:
+            return session.query(cls).filter(cls.username == username).one()
+        except NoResultFound:
+            return None
 class Workout(Base):
     __tablename__ = 'workouts'
     id = Column(Integer, primary_key=True)
@@ -163,4 +168,3 @@ class WorkoutExercises(Base):
     @classmethod
     def find_by_ids(cls, session, workout_id, exercise_id):
         return session.query(cls).filter_by(workout_id=workout_id, exercise_id=exercise_id).first()
-
